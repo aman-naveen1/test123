@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 
 from aase import robustness_report, simulate_disruption
+from auth import User, authenticate
 from calendar_parser import parse_academic_calendar
 from database import absence_count, init_db, load_data, recent_runs, record_absence, record_run, save_calendar, seed_from_data
 from engine import gap_score, load_demo_data, repair_schedule
@@ -56,19 +57,57 @@ div[data-testid="stFileUploader"] { padding:.25rem; }
 button[kind="primary"] { background:var(--navy) !important; color:#fff !important; border-radius:8px !important; font-weight:700 !important; border:1px solid var(--navy) !important; }
 button[kind="secondary"] { border-color:#cfd9e6 !important; border-radius:8px !important; }
 div[data-baseweb="select"] > div, input { border-radius:8px !important; }
+.login-shell { max-width:520px; margin:8vh auto 0; }
+.login-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:2rem; box-shadow:0 8px 30px rgba(22,45,80,.07); }
+.login-card h1 { color:var(--navy); margin:0; letter-spacing:-.04em; }
+.login-card p { color:var(--muted); margin:.5rem 0 1.5rem; }
 @media (max-width: 760px) { .block-container { padding:1rem; } .page-header { align-items:flex-start; flex-direction:column; } .page-header h1 { font-size:1.65rem; } }
 </style>
 """, unsafe_allow_html=True)
 
+def login_screen():
+    st.markdown(
+        '<div class="login-shell"><div class="login-card">'
+        '<div class="brand"><span class="brand-mark">A</span><div><div class="brand-title">AASE</div>'
+        '<div class="brand-subtitle">Secure scheduling workspace</div></div></div>'
+        "<h1>Sign in</h1><p>Choose the portal associated with your account.</p></div></div>",
+        unsafe_allow_html=True,
+    )
+    with st.form("login_form"):
+        username = st.text_input("Username", autocomplete="username")
+        password = st.text_input("Password", type="password", autocomplete="current-password")
+        submitted = st.form_submit_button("Sign in", type="primary", use_container_width=True)
+    if submitted:
+        user = authenticate(username, password)
+        if user is None:
+            st.error("Invalid username or password.")
+        else:
+            st.session_state["user"] = user
+            st.rerun()
+    with st.expander("Local demo accounts"):
+        st.caption("Administrator: admin / admin123 · Faculty: teacher / teacher123 · Student: student / student123")
+
+
+if "user" not in st.session_state:
+    login_screen()
+    st.stop()
+
+user: User = st.session_state["user"]
+
 with st.sidebar:
     st.markdown('''<div class="brand"><span class="brand-mark">A</span><div><div class="brand-title">AASE</div><div class="brand-subtitle">Scheduling workspace</div></div></div>''', unsafe_allow_html=True)
-    role = st.selectbox("View as", ["Student", "Faculty", "Administrator"], key="role_view")
+    role_labels = {"student": "Student", "teacher": "Faculty", "admin": "Administrator"}
+    role = role_labels[user.role]
+    st.caption(f"Signed in as **{user.username}**")
     navigation = {
         "Student": ["My Timetable", "Calendar"],
         "Faculty": ["My Teaching", "Report absence"],
         "Administrator": ["Dashboard","Time Table","Teachers","Rooms","Academic Calendar","OCR Intake","Disruptions","Optimization","Reports"],
     }
     page = st.radio("Navigation", navigation[role], label_visibility="collapsed")
+    if st.button("Sign out", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
     st.divider()
     status_copy = {
         "Student": "<b>Student view</b><br>View your timetable<br>Check academic dates",
@@ -98,7 +137,13 @@ st.markdown(f'''
 
 today_name = datetime.now().strftime("%A")
 groups = sorted({x["group"] for x in data["classes"]}) or ["BSc-CS-3A"]
-selected_group = st.selectbox("Student / Group", groups, index=0, key="selected_group")
+if user.role == "student" and user.scope:
+    selected_group = user.scope if user.scope in groups else groups[0]
+    st.caption(f"Student group: {selected_group}")
+elif user.role == "teacher":
+    selected_group = groups[0]
+else:
+    selected_group = st.selectbox("Student / Group", groups, index=0, key="selected_group")
 today_classes = [x for x in data["classes"] if x["day"] == today_name and x["group"] == selected_group]
 current_gap = gap_score(data["classes"], selected_group)
 
@@ -130,7 +175,11 @@ elif page == "Calendar":
 
 elif page == "My Teaching":
     teacher_options = sorted({x["teacher"] for x in data["classes"]}) or ["No teachers found"]
-    selected_teacher = st.selectbox("Faculty member", teacher_options, key="faculty_member")
+    if user.role == "teacher" and user.scope:
+        selected_teacher = user.scope if user.scope in teacher_options else teacher_options[0]
+        st.caption(f"Faculty member: {selected_teacher}")
+    else:
+        selected_teacher = st.selectbox("Faculty member", teacher_options, key="faculty_member")
     faculty_classes = [x for x in data["classes"] if x["teacher"] == selected_teacher and x["day"] == today_name]
     st.markdown(f'''<div class="timetable-panel"><div class="timetable-panel-head"><div><h2>Today’s teaching</h2><p>Sessions assigned to {escape(selected_teacher)}.</p></div><div class="schedule-badge">{len(faculty_classes)} session(s)</div></div>''', unsafe_allow_html=True)
     if faculty_classes:
@@ -141,7 +190,11 @@ elif page == "My Teaching":
 
 elif page == "Report absence":
     teacher_options = sorted({x["teacher"] for x in data["classes"]}) or ["No teachers found"]
-    selected_teacher = st.selectbox("Faculty member", teacher_options, key="absence_faculty_member")
+    if user.role == "teacher" and user.scope:
+        selected_teacher = user.scope if user.scope in teacher_options else teacher_options[0]
+        st.caption(f"Faculty member: {selected_teacher}")
+    else:
+        selected_teacher = st.selectbox("Faculty member", teacher_options, key="absence_faculty_member")
     absence_date = st.date_input("Date unavailable", value=date.today(), key="faculty_absence_date")
     reason = st.text_area("Reason (optional)", placeholder="Add a short note for the scheduling team.")
     if st.button("Submit absence report", type="primary"):
