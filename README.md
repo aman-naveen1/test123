@@ -29,6 +29,24 @@ python -m streamlit run app.py
 
 SQLite is built into Python. A local `aase.db` file is created automatically when the application starts; it is a runtime database and should not be committed to Git.
 
+### Portal login
+
+The dashboard opens with a local login screen and routes each account to its own portal:
+
+| Portal | Demo username | Demo password |
+| --- | --- | --- |
+| Administrator | `admin` | `admin123` |
+| Faculty | `teacher` | `teacher123` |
+| Student | `student` | `student123` |
+
+For local deployments, override the demo credentials with environment variables:
+`AASE_ADMIN_USERNAME`, `AASE_ADMIN_PASSWORD`, `AASE_TEACHER_USERNAME`,
+`AASE_TEACHER_PASSWORD`, `AASE_STUDENT_USERNAME`, and `AASE_STUDENT_PASSWORD`.
+Set `AASE_TEACHER_NAME` to bind the faculty portal to one teacher and
+`AASE_STUDENT_GROUP` to bind the student portal to one group. This is a
+prototype session login, not a replacement for institutional SSO or production
+identity management.
+
 ### Tesseract OCR
 
 AASE uses local Tesseract for scanned PDFs. Install Tesseract 5.x on the machine running the app. If it is not on `PATH`, set `TESSERACT_CMD` to the full `tesseract.exe` path.

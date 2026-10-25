@@ -1,0 +1,162 @@
+{
+  "students": [
+    {
+      "id": "BSc-CS-3A",
+      "size": 42
+    }
+  ],
+  "teachers": [
+    {
+      "name": "Dr. Anika Rao",
+      "qualified_courses": [
+        "Algorithms",
+        "Database Systems"
+      ],
+      "available_slots": {
+        "Monday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Tuesday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Wednesday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Thursday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Friday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ]
+      }
+    },
+    {
+      "name": "Prof. Vikram Shah",
+      "qualified_courses": [
+        "Computer Networks",
+        "Operating Systems"
+      ],
+      "available_slots": {
+        "Monday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Tuesday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Wednesday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Thursday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ],
+        "Friday": [
+          "09:00-10:00",
+          "10:00-11:00",
+          "11:15-12:15",
+          "12:15-13:15",
+          "14:00-15:00",
+          "15:00-16:00"
+        ]
+      }
+    }
+  ],
+  "rooms": [
+    {
+      "name": "C-101",
+      "capacity": 60,
+      "type": "Classroom"
+    },
+    {
+      "name": "C-102",
+      "capacity": 60,
+      "type": "Classroom"
+    }
+  ],
+  "classes": [
+    {
+      "day": "Monday",
+      "slot": "09:00-10:00",
+      "course": "Algorithms",
+      "teacher": "Dr. Anika Rao",
+      "room": "C-101",
+      "group": "BSc-CS-3A"
+    },
+    {
+      "day": "Monday",
+      "slot": "10:00-11:00",
+      "course": "Computer Networks",
+      "teacher": "Prof. Vikram Shah",
+      "room": "C-102",
+      "group": "BSc-CS-3A"
+    },
+    {
+      "day": "Monday",
+      "slot": "14:00-15:00",
+      "course": "Database Systems",
+      "teacher": "Dr. Anika Rao",
+      "room": "C-101",
+      "group": "BSc-CS-3A"
+    },
+    {
+      "day": "Tuesday",
+      "slot": "09:00-10:00",
+      "course": "Operating Systems",
+      "teacher": "Prof. Vikram Shah",
+      "room": "C-102",
+      "group": "BSc-CS-3A"
+    },
+    {
+      "day": "Wednesday",
+      "slot": "11:15-12:15",
+      "course": "Algorithms",
+      "teacher": "Dr. Anika Rao",
+      "room": "C-101",
+      "group": "BSc-CS-3A"
+    }
+  ]
+}
